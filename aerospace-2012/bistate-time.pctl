@@ -1,0 +1,12 @@
+filter(print, Pmax=? [ X "flock"&"m10" ], ("flock"&"none"))
+
+filter(max, Pmax=? [ X "flock" ], ("flock"&"m50"))
+
+filter(max, Pmax=? [ X X "flock" ], ("flock"&"m50"))
+
+filter(print, R{"numFtoT"}max=? [F "torus"], ("flock" & "none"))
+
+filter(count, P<=1 [true], ("torus" & "none"))
+
+filter(count, P<=1 [X "flock"], ("torus" & "none"))
+

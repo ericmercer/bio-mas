@@ -1,0 +1,20 @@
+filter(max, Pmax=? [ F "torus" ], "flock")
+
+filter(count, "flock"=>P>0.5 [ F "torus" ])
+
+filter(max, Pmin=? [ F "torus" ], "flock")
+
+filter(count, "flock"=>P>0.5 [ X "flock" ])
+
+filter(count, ("flock"&"none"))
+
+filter(count, P<1 [ F "flock"&"m10" ], ("flock"&"none"))
+
+filter(print, Pmax=? [ F "flock"&"m10" ], ("flock"&"none"))
+
+filter(print, Pmax=? [ X "flock"&"m10" ], ("flock"&"none"))
+
+filter(max, Pmax=? [X "flock"], ("flock"&"m50"))
+
+filter(max, Pmax=? [ X "flock" ], ("flock"&"m60"))
+

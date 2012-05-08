@@ -1,0 +1,79 @@
+// randomized dining philosophers [LR81]
+// three philosophers
+
+mdp
+
+const int flock = 0;
+const int torus = 1;
+const int none = 0;
+
+module bistate
+
+	s: [0..1] init 0;
+	m: [0..100] init none;
+
+	[] (s = flock) & (m = none) -> (s' = flock) & (m' = 10); 
+	[] (s = flock) & (m = none) -> (s' = flock) & (m' = 20);
+	[] (s = flock) & (m = none) -> (s' = flock) & (m' = 30);
+	[] (s = flock) & (m = none) -> (s' = flock) & (m' = 40); 
+	[] (s = flock) & (m = none) -> (s' = flock) & (m' = 50);
+	[] (s = flock) & (m = none) -> (s' = flock) & (m' = 60);
+	[] (s = flock) & (m = none) -> (s' = flock) & (m' = 70);
+	[] (s = flock) & (m = none) -> (s' = flock) & (m' = 80);
+	[] (s = flock) & (m = none) -> (s' = flock) & (m' = 90);
+	[] (s = flock) & (m = none) -> (s' = flock) & (m' = 100);
+
+	[] (s = flock) & (m = 10) -> (s' = flock) & (m' = none); 
+	[] (s = flock) & (m = 20) -> (s' = flock) & (m' = none);
+	[] (s = flock) & (m = 30) -> (s' = flock) & (m' = none);
+	[] (s = flock) & (m = 40) -> (s' = flock) & (m' = none); 
+	[] (s = flock) & (m = 50) -> 0.5: (s' = flock) & (m' = none) + 
+				     0.5: (s' = torus) & (m' = none);
+	[] (s = flock) & (m = 60) -> 1/m: (s' = flock) & (m' = none) +
+	                             1-(1/m): (s' = torus) & (m' = none);
+	[] (s = flock) & (m = 70) -> (s' = torus) & (m' = none);
+	[] (s = flock) & (m = 80) -> (s' = torus) & (m' = none);
+	[] (s = flock) & (m = 90) -> (s' = torus) & (m' = none);
+	[] (s = flock) & (m = 100) -> (s' = torus) & (m' = none);
+
+
+	[] (s = torus) & (m = none) -> (s' = torus) & (m' = 10); 
+	[] (s = torus) & (m = none) -> (s' = torus) & (m' = 20);
+	[] (s = torus) & (m = none) -> (s' = torus) & (m' = 30);
+	[] (s = torus) & (m = none) -> (s' = torus) & (m' = 40); 
+	[] (s = torus) & (m = none) -> (s' = torus) & (m' = 50);
+	[] (s = torus) & (m = none) -> (s' = torus) & (m' = 60);
+	[] (s = torus) & (m = none) -> (s' = torus) & (m' = 70);
+	[] (s = torus) & (m = none) -> (s' = torus) & (m' = 80);
+	[] (s = torus) & (m = none) -> (s' = torus) & (m' = 90);
+	[] (s = torus) & (m = none) -> (s' = torus) & (m' = 100);
+
+	[] (s = torus) & (m = 10) -> (s' = torus) & (m' = none); 
+	[] (s = torus) & (m = 20) -> 0.05: (s' = flock) & (m' = none) + 
+				     0.95: (s' = torus) & (m' = none);
+	[] (s = torus) & (m = 30) -> (s' = flock) & (m' = none);
+	[] (s = torus) & (m = 40) -> (s' = flock) & (m' = none); 
+	[] (s = torus) & (m = 50) -> (s' = flock) & (m' = none);
+	[] (s = torus) & (m = 60) -> (s' = flock) & (m' = none);
+	[] (s = torus) & (m = 70) -> (s' = flock) & (m' = none);
+	[] (s = torus) & (m = 80) -> (s' = flock) & (m' = none);
+	[] (s = torus) & (m = 90) -> (s' = flock) & (m' = none);
+	[] (s = torus) & (m = 100) -> (s' = flock) & (m' = none);
+
+endmodule
+
+//init (m = none) endinit
+
+label "flock" = (s = flock);
+label "torus" = (s = torus);
+label "none" = (m = none);
+label "m100" = (m = 100);
+label "m90" = (m = 90);
+label "m80" = (m = 80);
+label "m70" = (m = 70);
+label "m60" = (m = 60);
+label "m50" = (m = 50);
+label "m40" = (m = 40);
+label "m30" = (m = 30);
+label "m20" = (m = 20);
+label "m10" = (m = 10);
