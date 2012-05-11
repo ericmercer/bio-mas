@@ -4,9 +4,75 @@ filter(max, Pmax=? [ X "flock" ], ("flock"&"m50"))
 
 filter(max, Pmax=? [ X X "flock" ], ("flock"&"m50"))
 
-filter(print, R{"numFtoT"}max=? [F "torus"], ("flock" & "none"))
+filter(count, P<=1 [ true ], ("torus"&"none"))
 
-filter(count, P<=1 [true], ("torus" & "none"))
+filter(count, P<=1 [ X X "flock" ], ("torus"&"none"))
 
-filter(count, P<=1 [X "flock"], ("torus" & "none"))
+filter(print, R{"numTtoF"}max=? [ F "flock" ], ("torus"&"none"))
+
+// There is exactly one flock state.
+filter(state, Pmax=? [ true ], ("flock"&"none"))
+
+// There is exactly one flock M=10 state.
+filter(state, Pmax=? [ F "torus" ], ("flock"&"m10"))
+
+// Maximum expected time to switch form flock to torus for M=10
+filter(print, R{"numFtoT"}max=? [ F "torus" ], ("flock"&"m10"))
+
+// Probability of switch form flock to torus for M=10
+filter(print, Pmin=? [ X X "torus" ], ("flock"&"m10"))
+
+// Probability of switch form flock to torus for M=10
+filter(print, R{"numFtoT"}min=? [  "torus" ], ("flock"&"m10"))
+
+// Minimum expected time to switch form flock to torus for M=10 (should be 1)
+filter(print, R{"numFtoT"}min=? [ F "torus" ], ("flock"&"m10"))
+
+// Maximum expected time to switch form flock to torus for M=20
+filter(print, R{"numFtoT"}max=? [ F "torus" ], ("flock"&"m20"))
+
+// Minimum expected time to switch form flock to torus for M=20 (should be 1)
+filter(print, R{"numFtoT"}min=? [ F "torus" ], ("flock"&"m20"))
+
+// Maximum expected time to switch form flock to torus for M=30
+filter(print, R{"numFtoT"}max=? [ F "torus" ], ("flock"&"m30"))
+
+// Minimum expected time to switch form flock to torus for M=30 (should be 1)
+filter(print, R{"numFtoT"}min=? [ F "torus" ], ("flock"&"m30"))
+
+// Maximum expected time to switch form flock to torus for M=40
+filter(print, R{"numFtoT"}max=? [ F "torus" ], ("flock"&"m50"))
+
+// Minimum expected time to switch form flock to torus for M=40 (should be 1)
+filter(print, R{"numFtoT"}min=? [ F "torus" ], ("flock"&"m40"))
+
+// Maximum expected time to switch form flock to torus for M=50
+filter(print, R{"numFtoT"}max=? [ F "torus" ], ("flock"&"m50"))
+
+// Minimum expected time to switch form flock to torus for M=50 (should be 1)
+filter(print, R{"numFtoT"}min=? [ F "torus" ], ("flock"&"m50"))
+
+// Maximum expected time to switch form flock to torus for M=60
+filter(print, R{"numFtoT"}max=? [ F "torus" ], ("flock"&"m60"))
+
+// Minimum expected time to switch form flock to torus for M=60 (should be 1)
+filter(print, R{"numFtoT"}min=? [ F "torus" ], ("flock"&"m60"))
+
+// Maximum expected time to switch form flock to torus for M=70
+filter(print, R{"numFtoT"}max=? [ F "torus" ], ("flock"&"m70"))
+
+// Minimum expected time to switch form flock to torus for M=70 (should be 1)
+filter(print, R{"numFtoT"}min=? [ F "torus" ], ("flock"&"m70"))
+
+// Maximum expected time to switch form flock to torus for M=80 (should be 1)
+filter(print, R{"numFtoT"}max=? [ F "torus" ], ("flock"&"m80"))
+
+// Minimum expected time to switch form flock to torus for M=80 (should be 1)
+filter(print, R{"numFtoT"}min=? [ F "torus" ], ("flock"&"m80"))
+
+// Maximum expected time to switch from flock to torus when all M are equally likely
+filter(print, R{"numFtoT"}max=? [ F "torus" ], ("flock"&"none"))
+
+// Minimum expected time to switch from flock to torus when all M are equally likely (should be 1)
+filter(print, R{"numFtoT"}min=? [ F "torus" ], ("flock"&"none"))
 

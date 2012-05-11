@@ -6,8 +6,9 @@ mdp
 const int flock = 0;
 const int torus = 1;
 const int none = 0;
-const double SF = 1/4900;
-const double ST = 1/8000;
+const double SF = 70;
+const double ST = 30;
+const double RF = 1/5;
 
 module bistate
 
@@ -25,10 +26,9 @@ module bistate
 	[Fm90] (s = flock) & (m = none) -> (s' = flock) & (m' = 90);
 	[Fm100] (s = flock) & (m = none) -> (s' = flock) & (m' = 100);
 
-	[FtoT] (s = flock) & (m >= 10) & (m < 70) ->       SF*m*m:(s' = torus) & (m' = none) + 
-	                                             1 - (SF*m*m):(s' = flock) & (m' = m + 5); 
-	[FtoT] (s = flock) & (m >= 70) -> (s' = torus) & (m' = none); 
-
+	[FtoT] (s = flock) & (m >= 10) & (m < 70) ->       m/SF:(s' = torus) & (m' = none) + 
+	                                             1 - (m/SF):(s' = flock) & (m' = m + floor(m * RF)); 
+	[FtoTWP1] (s = flock) & (m >= 70) -> (s' = torus) & (m' = none); 
 
 	[Tm10] (s = torus) & (m = none) -> (s' = torus) & (m' = 10); 
 	[Tm20] (s = torus) & (m = none) -> (s' = torus) & (m' = 20);
@@ -41,18 +41,20 @@ module bistate
 	[Tm90] (s = torus) & (m = none) -> (s' = torus) & (m' = 90);
 	[Tm100] (s = torus) & (m = none) -> (s' = torus) & (m' = 100);
 
-	[TtoF] (s = torus) & (m >= 10) & (m < 30) ->       ST*(m-10)*(m-10)*(m-10):(s' = flock) & (m' = none) + 
-	                                             1 - (ST*(m-10)*(m-10)* (m-10)):(s' = torus) & (m' = m + 5); 
-	[TtoF] (s = torus) & (m >= 30) -> (s' = flock) & (m' = none); 
+	[TtoF] (s = torus) & (m >= 10) & (m < 30) ->       m/ST:(s' = flock) & (m' = none) + 
+	                                             1 - (m/ST):(s' = torus) & (m' = m + floor(m * RF)); 
+	[TtoFWP1] (s = torus) & (m >= 30) -> (s' = flock) & (m' = none); 
 
 endmodule
 
-rewards "numTtoF"
+rewards "numFtoT"
 	[FtoT] true : 1;
+	[FtoTWP1] true : 1;
 endrewards
 
-rewards "numFtoT"
+rewards "numTtoF"
 	[TtoF] true : 1;
+	[TtoFWP1] true : 1;
 endrewards
 
 
