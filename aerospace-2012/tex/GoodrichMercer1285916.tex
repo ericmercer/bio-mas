@@ -1,0 +1,251 @@
+% `template.tex', a bare-bones example employing the AIAA class.
+%
+% For a more advanced example that makes use of several third-party
+% LaTeX packages, see `advanced_example.tex', but please read the
+% Known Problems section of the users manual first.
+%
+% Typical processing for PostScript (PS) output:
+%
+%  latex template
+%  latex template   (repeat as needed to resolve references)
+%
+%  xdvi template    (onscreen draft display)
+%  dvips template   (postscript)
+%  gv template.ps   (onscreen display)
+%  lpr template.ps  (hardcopy)
+%
+% With the above, only Encapsulated PostScript (EPS) images can be used.
+%
+% Typical processing for Portable Document Format (PDF) output:
+%
+%  pdflatex template
+%  pdflatex template      (repeat as needed to resolve references)
+%
+%  acroread template.pdf  (onscreen display)
+%
+% If you have EPS figures, you will need to use the epstopdf script
+% to convert them to PDF because PDF is a limmited subset of EPS.
+% pdflatex accepts a variety of other image formats such as JPG, TIF,
+% PNG, and so forth -- check the documentation for your version.
+%
+% If you do *not* specify suffixes when using the graphicx package's
+% \includegraphics command, latex and pdflatex will automatically select
+% the appropriate figure format from those available.  This allows you
+% to produce PS and PDF output from the same LaTeX source file.
+%
+% To generate a large format (e.g., 11"x17") PostScript copy for editing
+% purposes, use
+%
+%  dvips -x 1467 -O -0.65in,0.85in -t tabloid template
+%
+% For further details and support, read the Users Manual, aiaa.pdf.
+
+
+% Try to reduce the number of latex support calls from people who
+% don't read the included documentation.
+%
+\typeout{}\typeout{If latex fails to find aiaa-tc, read the README file!}
+%
+
+
+\documentclass[]{aiaa-tc}% insert '[draft]' option to show overfull boxes
+\usepackage{graphicx,subfigure}
+
+ \title{Abstraction and Persistence: Macro-Level Guarantees of Collective Bio-Inspired  Teams under Human Supervision}
+
+ \author{
+  Michael A. Goodrich%
+    \thanks{Professor, Computer Science Department, 3361 TMCB, AIAA Member}
+  \ and Eric G. Mercer\thanks{Associate Professor, Computer Science Department, 3361 TMCB,}\\
+  {\normalsize\itshape
+   Brigham Young University, Provo, UT 84663, USA}
+ }
+
+ % Data used by 'handcarry' option if invoked
+ \AIAApapernumber{YEAR-NUMBER}
+ \AIAAconference{Conference Name, Date, and Location}
+ \AIAAcopyright{\AIAAcopyrightD{YEAR}}
+
+ % Define commands to assure consistent treatment throughout document
+ \newcommand{\eqnref}[1]{(\ref{#1})}
+ \newcommand{\class}[1]{\texttt{#1}}
+ \newcommand{\package}[1]{\texttt{#1}}
+ \newcommand{\file}[1]{\texttt{#1}}
+ \newcommand{\BibTeX}{\textsc{Bib}\TeX}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+It can be difficult for humans to control large numbers (100-200) of robots performing coordinated tasks.  Organizational constraints may be imposed that allow a human to issue commands or plays that dictate collective behavior, but naive hierarchical approaches can suffer from robustness issues in cases where key robots or communication channels are compromised.  Bio-inspired models can create robust and purposeful collective behavior that is implemented in a completely decentralized organization.  Unfortunately, although robust, it may be difficult for a human to influence such collectives in such a way that the collective is responsive to human input.   We present results from an iterative modeling exercise that systematically relates how individual agents can be influenced by humans to ensure macro-level behaviors of the collective.  
+\end{abstract}
+
+%\section*{Nomenclature}
+%
+%\begin{tabbing}
+%  XXX \= \kill% this line sets tab stop
+%  $J$ \> Jacobian Matrix \\
+%  $f$ \> Residual value vector \\
+%  $x$ \> Variable value vector \\
+%  $F$ \> Force, N \\
+%  $m$ \> Mass, kg \\
+%  $\Delta x$ \> Variable displacement vector \\
+%  $\alpha$ \> Acceleration, m/s\textsuperscript{2} \\[5pt]
+%  \textit{Subscript}\\
+%  $i$ \> Variable number \\
+% \end{tabbing}
+
+\section{Introduction}
+There are advantages to having large numbers (100-200) of robots perform coordinated tasks, but such large teams of robots may be difficult for a human to control.  Limitations on communication bandwidth and human attention make it difficult for a single human to gain and maintain situation awareness of each individual robot, and the same limitations also make it difficult for a human to influence individual robots in such a way that the collective behavior of the robots accomplishes a set of reasonable goals.  In response to these limitations, organizational constraints may be imposed that allow a human to issue commands or plays that dictate collective behavior, but naive hierarchical approaches can suffer from robustness issues in cases where key robots or communication channels are compromised.  In response to these issues, researchers have proposed using bio-inspired models to create robust and purposeful collective behavior that is implemented in a completely decentralized organization.  Unfortunately, although robust, it may be difficult for a human to influence such collectives in such a way that the collective is responsive to human input.   We present results from a modeling exercise that systematically relates how individual agents can be influenced by humans to ensure macro-level behaviors of the collective.
+
+\subsection{Motivation}
+As noted by Lewis~\cite{WangLewis2007}, current methods for controlling teams with large numbers or robots (N on the order of 20-200 robots) may grow faster than $O(N)$ because of the complexity of coordinating robot activities.  Adding multiple operators can help with some problems, but if complexity grows as $O(>N)$ then the number of required operators will also grow faster than $O(N)$.  This is counter to the common goal of maximizing human influence while simultaneously minimizing the number of humans involved
+
+An important way to deal with complexity that arises from inter-agent interactions is to use decentralized control in which robots coordinate behavior in a decentralized fashion.  There is an emerging body of strong work on the design of decentralized controllers and on distributed consensus algorithms that provide performance guarantees on the behavior of such systems (see, for example,~\cite{OlfatiSaber2006,Tanner2003,WiegandEtAl2006}).
+
+There has also been some interesting work on having a human control such decentralized teams~\cite{DingEtAl2009,KiraPotter2009,McLainBeard00}.  This decentralized approach has an important benefit: it can help turn an $O(>N)$ problem into an $O(N)$ or $O(1)$ problem; decentralized control takes care of the required inter-agent coordination, leaving the human to manage the team rather than individual agents. A limitation in much of the prior work is that the human takes on a role of centralized supervisor who controls distributed behavior through some sort of broadcast mechanism or who controls a key agent such as a leader with whom all other agents interact.  A centralized supervisor can introduce brittleness into the system.  If team behavior requires all agents to receive a consistent and centralized signal (from the human or from a leader), then delays or inaccuracies in this signal can cause instabilities or errors.
+
+\subsection{Proposed Solution}
+We propose to explore other roles that a human can adopt (a)~to keep management complexity within bounds ($O(N)$ or better) and (b)~to avoid brittleness.  The main constraint on these other human roles is that the team must produce guaranteed performance.  Two key ideas are required to manage complexity and maintain robustness in the system: abstraction and persistence.  
+
+Abstraction means that the behavior of the collective is more than the behavior of the individual members.  This principle is well-known in biological systems where a colony or flock exhibits collective behavior that appears purposeful to a human observer in the large scale, even though the behavior of individual members may not appear predictable or sensible.  The human must understand the collective at a macro level and focus influence on managing so-called collective states that appear purposeful.  Because this collective phenomenon of purposeful behavior is so well-known in bio-inspired systems, we will begin our work by focusing exclusively on such systems.
+
+Persistence means that, since we have replaced centralized control with decentralized human influence, the human must persist in influencing the agents in order to have high confidence that the collective state of the system behaves as needed.  Simply put, since the human cannot reliably and quickly control every agent at once, he or she must sustain influence on some subset of agents in a way that behavior emerges as desired. Such influence must be understood at a level sufficient to ensure robustness and authority in the system.
+
+In the next sections, we propose a simple model class that allows decentralized agents to exhibit multiple forms of collective behavior, abstract this model class to a Markov Decision Process which allows us to formalize the technical challenges associated with abstraction and persistence, and present a formal-methods approach for identifying performance guarantees.
+
+
+\section{Model}
+
+We adopt a simplified version of Couzin’s model~\cite{CouzinEtAl2002}.  Let $i\in\{1, \ldots, N\}$ be a set of $N$ homogeneous agents with nonholonomic dynamics given by 
+\begin{eqnarray*}
+	\dot{x}_i &=& s \cos(\theta_i) \\
+	\dot{y}_i &=& s \sin(\theta_i) \\
+	\dot{\theta}_i &=& \omega_i
+\end{eqnarray*}
+where $[x_i,y_i]^T\in \Re^2$ is the $i^{\rm th}$ agent's position, $\theta_i\in[-\pi,\pi]$ is the angular heading of the agent, $s$ is the constant agent speed, and $\omega_i$ is the angular velocity control input.  For simplicity we define:
+\begin{eqnarray*} 
+v_i&=&[\cos(\theta_i),\sin(\theta_i)]^T \\
+c_i&=&[x_i,y_i]^T
+\end{eqnarray*}
+%and let $A(t)= a_{ij}(t)$ denote the sensory adjacency matrix where $a_{ij} (t)=1$ means that agent $j$ is visible to agent $i$ at time $t$ . Each $a_{ij}(t)$ is determined at time $t$ according to a Bernoulli random variable with parameter
+%\[ p_{ij} (t)= \left\{ \begin{array}{cc}
+%	\frac{1}{d_{ij} (t)}    &  \mbox{if $d_{ij} (t)\geq1$} \\
+%   	1 & \mbox{otherwise} 
+%	 \end{array}\right. .
+%\]
+%where $d_{ij} (t)$ is the Euclidean distance between agents $i$ and $j$ at time $t$. This method of choosing neighbors is similar to the random neighbor model used in~ \cite{BodeEtAl2011}which replicates field observations of starlings~\cite{Ballerini2008}. The work is relevant for robot systems because occlusions make visibility less likely with growing distance for visual sensors and interference makes sensing less likely with growing distance for radio or wifi-based sensors.
+
+As with Couzin’s model, agents react to neighbors within three different zones: repulsion, orientation, and attraction. The neighbors in these zones are determined by
+\begin{eqnarray*}
+n_i^r&=&\{j:\parallel c_i-c_j\parallel\leq R_{(r,a_{ij} )}=1\}\\
+n_i^o&=&\{j:\parallel c_i-c_j\parallel\leq R_{(o,a_{ij} )}=1\}\\
+n_i^a&=&\{j: a_ij=1\}
+\end{eqnarray*}
+where $n_i^r$, $n_i^o$, and $n_i^a$ are the sets of agent $i$'s neighbors in the regions of repulsion, orientation, and attraction, respectively.  The parameters $R_r$ and $R_o$ are the associated radii of repulsion and orientation. Note that this model allows for overlapping regions of repulsion, orientation, and attraction. This overlap eliminates the hard switch between the repulsion, orientation, and attraction forces seen in~\cite{CouzinEtAl2002} that may be sensitive to sensor transients in real robots.
+
+The control input $\omega_i$ is determined by first computing the repulsion, orientation, and attraction vectors
+\begin{eqnarray*}
+u_i^r&=& - \sum_{n_i^r} \frac{c_j-c_i}{ \parallel c_j-c_i \parallel^2} \\   
+u_i^o&=&\frac{v_i+ \sum_{n_i^o} v_j}{ \parallel v_i+ \sum_{n_i^o}v_j)\parallel} \\ 
+u_i^a&=&\frac{\sum_{n_i^a} c_j-c_i}{\parallel\sum_{n_i^a}(c_j-c_i) \parallel}.
+\end{eqnarray*}
+Next, the desired heading vector $u_i$ is computed as $u_i=u_i^r+u_i^o+u_i^a$.  Note that, because of the normalization in  the equations above, orientation and attraction forces are always equally weighted in the model. This keeps one of the two fundamental forces from overpowering the other. It also allows the exponentially growing repulsion vector to overpower the orientation and attraction forces as agents move closer together, which aids in collision avoidance. Finally, angular velocity, $\omega_i$, is computed as
+\begin{eqnarray*}
+\omega_i&=&k \alpha_i \\
+\alpha_i&=&\tan^{-1}(u_i )- \theta_i
+\end{eqnarray*}
+where we limit $\alpha_i\in[-\pi,\pi]$. Since $\pi=\max_{u_i}\tan^{-1}(u_i )$ then $\omega_i$ is bounded by $k\pi$.
+
+\section{Abstraction}
+In the simplified version of Couzin's model described in the previous section, individual agents are repelled by near agents, are attracted to far agents, and align with intermediate agents.   Although the states of individual agents determine collective behavior, it is often useful to view the agents at a macro level where they display a suite of collective behaviors, illustrated in Figure~\ref{fig:CouzinPhases}, which we call abstract or collective states.
+
+ \begin{figure}[hbt]
+ \center
+ \subfigure[Torus]{\label{fig:Torus}{\includegraphics[width=1.4in]{figs/torus.png}}}
+ \subfigure[Flock]{\label{fig:DynParall}{\includegraphics[width=1.4in]{figs/flock.png}}}
+\caption{Snapshots of various phases from dynamic model: (a)~Torus, (b)~Flock.}
+\label{fig:CouzinPhases}
+% /Users/mike/Documents/projects and proposals/_Current/Robotics CTA/Simulations/WhenIsMetricTopoConnected.m
+\end{figure}
+  
+
+The model in the previous section is capable of producing the flock and the torus behaviors and, importantly, can produce either collective behavior given the same set of model parameters ($R_r$ and $R_o$, the radii of repulsion and orientation).  Since either collective behavior can be produced by the agents, a human can influence the emergent behavior of the collective by manipulating initial states.  Even more importantly, a human can cause the collective to switch from one abstract behavior state to another by influencing a subset of the agents.
+
+From the perspective of the abstract collective states, the behavior of individual agents evolves as a stochastic difference equation, making it difficult to characterize or predict the behavior of any individual agent's behavior.   Fortunately, both the abstract states of tori and flocks are attractors of the dynamic system that is created by the decentralized control laws from the previous section.  As such, the abstract states represent attractors in the dynamic system.  Characterizing the stochastic system with abstract states leads to the definition of a critical challenge in human interaction with bio-inspired robot teams:  how does one allow the agents to maintain their decentralized implementation while allowing the human to influence individual agents and thereby influence which attractor or abstract state is exhibited by the collective.  
+
+Before proceeding, it is useful to note that distinct abstract or collective states exist for many systems~\cite{Romero2011,GoodrichBrown2011}.
+
+\section{Abstraction to MDP}
+We propose that {\em efficient human interaction with a decentralized robot team must operate at the ``macro-level"} encoded by abstract states that are attractors in the underlying dynamic system.  Consistent with both bio-inspired and communication-limited systems, we assume that the decentralized implementation means that (a)~the number of other agents that influence agent i’s behavior is small, and (b)~the number of agents influenced by the operator is also small.  Furthermore, we assume that the inter-agent topology varies over time, as indeed it is in the model described above (such as when an agent travels in and out of another agent’s neighborhood).  Given this definition of abstract state, the human’s task is to influence the collective to travel from one abstract state to another using the tools available to him or her.A principal challenge in the macro-level abstraction is that the transitions between states behave non-deterministically over an undetermined period of time.  Human influence is eventually implemented as commands to individual agents and these agents then influence other agents through the network topology.  Thus, the human is “injecting” influence into the system, and that influence percolates over time to other agents. As such transitions between abstract states take a non-deterministic amount of time depending on the percolation rate through the collective. To better understand how to influence a collective through individual agents, we build and analyze a probabilistic model that formally abstracts from individual behaviors to collective states.
+
+In the simplified Couzin model presented earlier, we have observed two distinct and controllable abstract states: flock and torus.  Each state emerges depending on initial conditions of agents, and parameters can be selected so that each state is equally probable given a broad set of those initial conditions.  We build a Markov Decision Process (MDP) over these two abstract states, and we build the model in such a way that individual agent states are implicitly, rather than explicitly, modeled. In other words, we no longer directly track, as in the Couzin-based model, the underlying dynamic system governing individual agent behavior, and we instead view agents as either participating in the collective state or note. 
+
+Recall that a MDP is given by four components: state, actions, transition probability, and reward.  We will discuss rewards in a subsequent section.  The remainder of this section incrementally builds the rest of the MDP.
+
+\subsection{Abstract State}
+We represent the abstract state by a tuple $s=(\sigma,\delta)$ where $\sigma\in\{\mbox{flock, torus}\}$ is the collective state and $\delta\in[0,\frac{1}{N},\ldots,\frac{N-1}{N},1]$ represents the fraction of the $N$ total agents whose individual behavior is compatible with the state of the collective.  We can choose parameters for the simplified version of Couzin's model such that the a flock or torus are equally likely for random initial agent locations and orientations.
+
+\subsection{Action}
+It is possible to cause the agents to change from one state to another by controlling the number of agents in the collective who are informed about the location of some desired object.  This is done by allowing the human to select a subset of agents, we'll call them {\em stakeholders} to be consistent with prior work~\cite{GoodrichBrown2011}, and inform them of some desired objective, as follows.A stakeholder is an agent that is influenced by the group and also influenced by its interaction with a human operator. In [3], Couzin showed how a limited number of stakeholders influence the behavior of a flock. In prior work, we have shown that not only can stakeholders allow a human to control the direction of a flock, but that stakeholders can also be used to control a torus and dynamically switch between attractors. Recall that $N$ represents the number of agents in the collective.  We assume that the human operator can broadcast a desired location to $M < N$ stakeholder agents. By broadcasting a reference input to a limited number of agents a human may influence the movement of the swarm and even cause the group to switch attractors.A stakeholder has dynamics and control inputs just like every other agent.  The difference is that the control input $u_i$ is modified to allow a human operator to influence the stakeholder's behavior. This influence is added into the stakeholder attraction dynamics through a weighted sum as follows:
+\[u_i^{sa}=  \frac{\rho \hat{q}_i+(1-\rho) u_i^a}{\parallel  \rho \hat{q}_i+(1-\rho) u_i^a  \parallel}\]where the $sa$ superscript indicates the vector of attraction for a stakeholder, $\hat{q}\in\Re^2$ is a the desired location or reference, $\rho\in[0,1]$ is the priority of the reference input (relative to the importance of the influence of other agents), and $u_i^a$ is determined by the attraction dynamics described earlier.  Orientation and repulsion are given as described previously and combine with the stakeholder attractor as follows:\[ u_i=u_i^{sa}+u_i^o+u_i^r.\]This control input enables human influence on the system without eliminating inter-agent dynamics. The input is limited to the attraction dynamics in order to avoid tampering with orientation dynamics and repulsion dynamics, which are necessary for collision avoidance.
+
+Thus, the action available to the human through which collective state can be influenced is given by $a=(M,\rho)$, that is, the human can choose the number of agents who are turned into stakeholders and the relative priority of the desired location for those agents who are stakeholders.
+
+\subsection{Transition Probability}
+This model of influence allows the operator to manage either the number of agents influenced or the priority of reference input versus inter-agent influence.  As a function of $\rho$ and $M$, prior work has identified the probability, using Matlab simulation, of a swarm switching from torus to flock and from flock to torus; see Figure~\ref{fig:Transitions}.
+\begin{figure}[hbt]
+ \center
+ \subfigure[Torus2Flock]{\label{fig:Torus}{\includegraphics[width=2.5in]{figs/Torus2Flock.png}}}
+ \subfigure[Flock2Torus]{\label{fig:DynParall}{\includegraphics[width=2.5in]{figs/Flock2Torus.png}}}
+\caption{Probability of transitioning from (a) torus to flock and (b) flock to torus, as a function of $\rho$ and $M$.}
+\label{fig:Transitions}
+% /Users/mike/Documents/projects and proposals/_Current/Robotics CTA/Simulations/WhenIsMetricTopoConnected.m
+\end{figure}
+
+In the interest of simplicity, we consider only $\rho=0.5$ so that the only action available to the human is $a=M$.  The human can thus choose how many agents are influenced, and then sustain influence over those agents for a period of time while the influence percolates through the collective and a new desired abstract state emerges.   In terms of the MDP, our goal is to model the transition from one abstract state $s_t$ to another $s_{t+1}$, meaning that we must identify $p(s_{t+1} | s_t,M)$ where $a=M$. 
+
+Recall that the abstract state $s$ has two components: the collective state of the agents, $\sigma$, and the number of agents whose behavior is consistent with the collective state, $\delta$.  For this paper, we assume a deterministic linear model for how $\delta$ changes as a function of $M$.  Let $RF$ denote the rate that agent influence propagates from agent to agent yielding $\delta_{t+1}=RF\delta_t + \delta_t$. 
+
+This is actually a assumption for two reasons.  First, the rate of influence is not, in general, linear.  It is described more accurately using a linear differential equation over some abstract state $x$ as $\dot{x}=-Lx$ where $L$ is the graph Laplacian associated with the inter-agent graph topology.  For such a model, the rate of propagation is better described by a decaying exponential with parameter given by the Fiedler eigenvalue associated with $L$.  The linear model can be thought of as describing the ``steep part" of the exponential decay.  Second, since agents are moving, the agent topology changes over time so influence ``spreads'' unevenly and stochastically among the agents.
+
+However, the assumption is useful from a modeling perspective because it allows us to decompose the transition probability into 
+two parts: a deterministic part and a simple stochastic part.   To illustrate, consider the following example.  Suppose that the collective 
+is in state $\sigma={\rm flock}$ and we want to change the state to $\sigma={\rm torus}$.  Since no agents are behaving consistent 
+with torus-like behavior, $\delta=0$.  Thus, the initial state is given by $s=({\rm flock},0)$.  Now suppose that the human chooses to 
+only communicate with ten agents out of the possible 100 total agents.  Then $a=10$ and we want to know what state will occur 
+after one time step.  This is given abstractly by $p(s_{t+1} | s_t, 10) = p(s_{t+1} | ({\rm flock}, 0), 10)$.  There are two possible next 
+states, $s_{t+1} \in \{ ({\rm torus},0.1+0.1RF), ({\rm flock},0.1+ 0.1RF)\}$ corresponding to (a)~a switch from flock to torus with only 
+$0.1(1+RF)$ of the agents behaving in a ``torus-like" way but the rest to follow, and (b)~a persistent flock but with $0.1(1+RF)$ of 
+the agents starting to behave in a ``torus-like" way, respectively.  We construct the transition probability by specifying values for 
+$p(({\rm torus},0.1+0.1RF) | ({\rm flock}, 0), 10)$ and $p(({\rm flock},0.1+0.1RF) | ({\rm flock}, 0), 10)$.
+
+More generally, we must specify the transition probability from any state $s_t$ to any state $s_{t+1}$ given any value of $M$.  For the results below, we discretize consider $M\in\{10, 20, \ldots, 100\}$.  We assume that when $M\geq 70$ the transition from flock to torus is certain and for $M<70$ the probability equals $M/70$.  This is loosely based on Figure~\ref{fig:Transitions}.  Similary, we assume that when $M\geq 30$ the transition from torus to flock is certain and for $M<30$ the transition probability equals $M/30$.  Future work should refine these values using both simulations and by estimating the Fiedler eigenvalue for average graph Laplacians.
+
+\section{Analysis}
+Using the MDP, we can be used to show formally that the interaction between human and collective is sound and complete.  The first step toward performing this formal analysis is defining the property of {\em persistence}. Persistence is a quantitative measure of authority in the MDP that represents the level of control exerted over a period of time by a human operator necessary to affect emergent behavior in a collective.  Persistence encapsulates both span of control (i.e., the number of agents directly influenced by the human) and a minimum time bound over which the human exerts input to the agents before the desired collective behavior emerges. %Important to persistence is a notion of spatial and temporal locality.  Spatial locality is the span of control (i.e., the number of agents directly influenced by the human, which is precisely the initial value $M$ in the MDP described above). Temporal locality is the minimum time bound over which the human exerts input to the automation at a given span of control before the desired behavior emerges. Both aspects of the measure, temporal and spatial, are necessary to understand and characterize actions in the MDP model of the human-robot team.
+
+We formalize persistence using probabilistic computation tree logic (PCTL) over states and actions of the MDP abstraction. PCTL is an extension of computation tree logic (CTL), which describes universal and existential properties of branching in a non-deterministic transition system~\cite{CTL_ref}.  The PCTL extension adds to the branching time logic probabilities and soft deadlines~\cite{bea98}. For example, PCTL enables properties such as, ``there is a 98\% probability that the collective will form a torus structure within 2 seconds of the human input" to be naturally stated over the alphabet of the MDP.Informally, persistence is a bound, $[\ell_t,u_t]$, on the amount of time a particular human input encoded as span-of-control $M$ must be given to the robots to guarantee that an observed collective state, $\sigma\in\{\mbox{torus, flock}\}$, reflects a desired emergent collective behavior. The property is computed in our MDP model using the PRISM stochastic model checker -- a tool for formal modeling and analysis of systems that exhibit random or probabilistic behaviors~\cite{prism_ref}.  To measure time, the MDP is augmented with rewards. From the point where the action is resolved, each state is rewarded with the constant 1, representing a single time step in a discrete space, until the system adopts the desired collective behavior in the abstract state. It is now possible to measure persistence, or the expected time to transition to the abstract state, by asking PRISM to find computation paths in the MDP that maximize or minimize the reward. The general pattern for the PRISM property is expressed as 
+\begin{verbatim} {filter(min, Rmin=? [ F "flock" ], ("torus"&"M10"))}.\end{verbatim}which is understood intuitively as, ``from the torus abstract state where the chosen action is $M=10$, what is the minimum reward when the system eventually reaches the flock abstract state.''  PRISM supports a similar operator, {\em Rmax}, to compute the maximum reward.In our simple MDP model the expected time to transition to a Flock from a Torus when directly influencing 10 agents is 2.43 units. The value, of course, changes as we adjust the probability distributions in the model. In general, the maximum time to transition from a Flock to a Torus in the worst case (m=10) is 4.4 time units. The minimum time is 1 which occurs for $M \geq 70$. The maximum time to transition from Flock to Torus is 2.43 and the minimum time is 1 for $M\geq 30$. The running time to compute these bounds by PRISM is negligible.
+
+%Working at this level of abstraction is useful for identifying guaranteed bounds on the behavior of the abstract system. To be of practical use for real human-robot teams, we must map the behavior of the team at the abstract level to the implementation-level details encoded in model described in Section 2.  {\sc Let f= and let g= …} This leads to an important technical challenge, namely using formal methods to show that the low-level human inputs correctly implement the abstract action, that is, %\[ \alpha_n = [u_\tau^{i_1}, u_\tau^{i_2}, \ldots, u_\tau^{\i_n}] \mbox{ for } \tau\in[\ell_t, u_t]. \]%using fi  and gi.
+
+%To help understand why this technical challenge is important, note that persistence measures human control over the automation. An input from the human with very low persistence at a high probability indicates centralized authority where the human is directly controlling the collective. In contrast, a very high persistence from an action probably indicates decentralized authority with limited control over the collective behavior. With such a notion of persistence, it is possible to define and characterize control actions, ?n, that reflect a desired level of authority in the automation. %A second technical challenge is the relationship between the abstract state and what is observable from the system. We will formally model $\beta$ as a predicate that, within probabilistic bounds, indicates the abstract state of the collective.  We will then use the requirements for this predicate to identify what must be observed by the human, meaning that we will relate $\beta$ to the observations available from the robots (ya, using the notation from section 2).%Given such a characterization of control through persistence, it is possibly to classify actions, q?_Mn, in a three dimensional space defined by control-authority (measured as temporal span), span-of-control (measured as the number of agents influenced), and emergent behavior (measured as the probability of a particular attractor or macro-level behavior). With such a classification, we can identify a third technical challenge, namely creating a catalog or library actions that uses formal methods to identify what various values of q?_M  can do to the system.  This catalog is the basis for algorithms that will implement user interfaces that allow a human to manage persistence time and level of control authority. A plan over decentralized control gives more autonomy to the collective while a plan over centralized control minimizes autonomy. 
+
+\section{Conclusion}
+Bio-inspired systems can be modeled at an abstract level as MDPs that use known collective states and that allow humans to inject influence through span of control.  Formal methods can be used to relate the states and actions of the MDP to behaviors of the implementation-level state-space system, guaranteeing that the abstraction behaves correctly. Persistence (temporal locality and span of control) can be used to describe formal guarantees of behavior for the MDP. 
+
+Future work should use these formal guarantees as guidelines for designing user interfaces that (a)~enforce sequencing that avoids incorrect behavior or (b)~inform the operator when a choice is made that moves the system outside of guaranteed operational parameters.   Additional future work should generalize these results to other decentralized systems.
+
+\section*{Acknowledgments}
+
+This work was partially supported by grants from the Office of Naval Research and from the Army Research Collaborative Technology Alliance.  Results and opinions are not necessarily those of the funding agencies.
+
+\bibliographystyle{plain}
+\bibliography{/Users/mike/Documents/tex/bib/standard3}
+
+
+\end{document}
+
+% - Release $Name:  $ -
